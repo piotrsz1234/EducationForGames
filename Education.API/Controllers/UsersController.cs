@@ -21,22 +21,22 @@ namespace Education.API.Controllers {
 			userManagement = new UserManagement (collection, codes);
 		}
 
-		[Route("LogIn/{login}/{password}")]
-		[HttpGet]
+		[Route("LogIn")]
+		[HttpPost]
 		public async Task<ActionResult<User>> LogInAsync (string login, string password) {
 			var id = await userManagement.LogInAsync (login, password);
 			if (id == Guid.Empty) return null;
 			return await userManagement.GetUserDataAsync (id);
 		}
 
-		[Route("Register/{user}/{code}")]
+		[Route("Register")]
 		[HttpPost]
-		public async Task<ActionResult<Guid>> RegisterAsync (User user, RegistrationCode code) {
+		public async Task<ActionResult<Guid>> RegisterAsync (User user, string code) {
 			var id = await userManagement.RegisterAsync (user, code);
 			return id;
 		}
 
-		[Route("GenerateCode/{id}/{howMany}")]
+		[Route("GenerateCode")]
 		[HttpPost]
 		public async Task<ActionResult> GenerateCodeAsync (Guid id, int howMany) {
 			await userManagement.GenerateRegisterCodes (id, howMany);

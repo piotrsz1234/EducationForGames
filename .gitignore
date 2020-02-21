@@ -339,3 +339,4 @@ healthchecksdb
 MigrationBackup/
 
 Czas.txt
+bootstrap.min.css

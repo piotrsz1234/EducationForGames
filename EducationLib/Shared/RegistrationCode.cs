@@ -13,12 +13,15 @@ namespace EducationLib.Shared {
 		public Guid SchoolID { get; set; }
 		[BsonElement("Code")]
 		public string Code { get; set; }
+		[BsonElement("Role")]
+		public UserRole Role { get; set; }
 
 		public RegistrationCode () { }
 
-		public RegistrationCode(Guid schoolID, string code) {
+		public RegistrationCode(Guid schoolID, string code, UserRole role) {
 			SchoolID = schoolID;
 			Code = code;
+			Role = role;
 		}
 
 	}
