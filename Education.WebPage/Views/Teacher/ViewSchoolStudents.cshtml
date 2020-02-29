@@ -1,0 +1,30 @@
+﻿@model List<User>
+@{
+	ViewData["Title"] = "View all school's students";
+}
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td scope="col">Student's ID</td>
+			<td scope="col">Student's Login</td>
+			<td scope="col">Check stats</td>
+		</tr>
+	</thead>
+	<tbody>
+		@if(Model != null)
+		@foreach (var item in Model) {
+			<tr>
+				<td>@item.ID</td>
+				<td>@item.Login</td>
+				<td>
+					<a href="Teacher/ViewStudentsAnswers/@item.ID">
+						<div class="btn btn-primary">
+							<i class="material-icons">timeline</i>
+						</div>
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

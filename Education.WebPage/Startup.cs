@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EducationLib.APIHelper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +28,7 @@ namespace Education.WebPage {
 				options.Cookie.IsEssential = true;
 			});
 			services.AddControllersWithViews ();
+			services.AddSingleton (new HttpHelper (Configuration.GetConnectionString ("API")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,5 +53,6 @@ namespace Education.WebPage {
 					pattern: "{controller=Home}/{action=Index}/{id?}");
 			});
 		}
+	
 	}
 }

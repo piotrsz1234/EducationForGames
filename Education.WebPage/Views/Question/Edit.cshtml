@@ -1,0 +1,24 @@
+﻿@model EducationLib.Shared.Question
+
+@{
+    ViewData["Title"] = "Edit Question";
+}
+
+<script>
+	SetCountOfAnswers(@Model.SeparatedAnswers.Length);
+</script>
+
+<form action="Question/Edit" method="post">
+    <input type="hidden" name="ID" value="@Model.ID" />
+    <label for="questionText"></label>
+    <input id="questionText" type="text" class="form-control" value="@Model.QuestionText" name="QuestionText" />
+       
+        @for (int i = 0; i < Model.SeparatedAnswers.Length; i++) {
+            <label for="answer">Answer</label>
+            <input id="answer" type="text" value="@Model.SeparatedAnswers.ElementAt(i)" name="SeperatedAnswers[@i]" />
+            <input type="radio" id="customRadio" name="CorrectAnswer" class="custom-control-input" value="@i">
+            <label class="custom-control-label" for="customRadio">Correct Answer</label>
+		}
+    <button class="btn btn-primary" onclick="UpdateValues()">Add Answer</button>
+    <input type="submit" value="Add" class="btn btn-primary" />
+</form>

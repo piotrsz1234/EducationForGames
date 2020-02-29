@@ -1,0 +1,23 @@
+﻿@model Question
+
+@{
+	ViewData["Title"] = "Add Question";
+}
+<script>
+	SetCountOfAnswers(@((Model == null)?3:Model.SeparatedAnswers.Length));
+</script>
+
+<form action="Question/Add" method="post">
+
+	<label for="questionText"></label>
+	<input id="questionText" type="text" class="form-control" value="@Model?.QuestionText" name="QuestionText" />
+	@if (Model != null)
+		@for (int i = 0; i < Model.SeparatedAnswers.Length; i++) {
+			<label for="answer">Answer</label>
+			<input id="answer" type="text" value="@Model?.SeparatedAnswers?.ElementAt(i)" name="SeperatedAnswers[@i]" />
+			<input type="radio" id="customRadio" name="CorrectAnswer" class="custom-control-input" value="@i">
+			<label class="custom-control-label" for="customRadio">Correct Answer</label>
+		}
+
+	<input type="submit" value="Add" class="btn btn-primary" />
+</form>

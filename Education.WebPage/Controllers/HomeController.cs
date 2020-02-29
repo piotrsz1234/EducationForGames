@@ -13,7 +13,7 @@ namespace Education.WebPage.Controllers {
 			return View ();
 		}
 
-		public IActionResult Register() {
+		public IActionResult Register () {
 			if (this.IsUserLoggedIn ()) return RedirectToAction ("Index", "User");
 			return View ();
 		}
