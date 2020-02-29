@@ -31,7 +31,6 @@ namespace Education.API {
 			services.AddSingleton (database.GetCollection<Question>("Questions"));
 			services.AddSingleton (database.GetCollection<QuestionAnswer>("Answers"));
 			services.AddSingleton (database.GetCollection<RegistrationCode>("Codes"));
-			services.AddSingleton (new HttpHelper (Configuration.GetConnectionString ("API")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

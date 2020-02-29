@@ -4,6 +4,7 @@ using EducationLib.Shared;
 using EducationLib.DatabaseManagement;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace Education.API.Controllers {
 	
@@ -49,8 +50,47 @@ namespace Education.API.Controllers {
 		[Route("AddAnswer/{user}/{question}/{status}")]
 		[HttpPost]
 		public async Task<ActionResult> AddAnswerAsync(Guid user, Guid question, bool status) {
-			await answerManagement.AnswerQuestion (question, user, status);
+			await answerManagement.AnswerQuestionAsync (question, user, status);
 			return Ok ();
+		}
+
+		[Route("GetAnswer/{user}/{question}")]
+		[HttpPost]
+		public async Task<ActionResult<bool>> GetAnswerAsync(Guid user, Guid question) {
+			return await answerManagement.GetAnswerAsync (user, question);
+		}
+
+		[Route("GoodAnswersPercent/{id}")]
+		[HttpGet]
+		public async Task<ActionResult<float>> GoodAnswersPercentAsync (Guid id) {
+			long answersCount = await answerManagement.HowManyAnswers (id);
+			if (answersCount == 0) return 0f;
+			long goodAnswersCount = await answerManagement.HowManyGoodAnswers (id);
+			return goodAnswersCount / (float) answersCount;
+		}
+
+		[Route("IDOfUsersWhoAnswered/{id}")]
+		[HttpGet]
+		public async IAsyncEnumerable<Guid> IDOfUsersWhoAnsweredAsync(Guid id) {
+			IEnumerable<Guid> ids = await answerManagement.IDOfUsersHowAnsweredQuestion (id);
+			foreach (var item in ids) {
+				yield return item;
+			}
+		}
+
+		[Route("GetTeachersQuestion/{teacherID}")]
+		[HttpGet]
+		public async IAsyncEnumerable<Question> GetTeachersQuestionsAsync (Guid teacherID) {
+			var enumerable = await questionManagement.GetTeachersQuestionsAsync (teacherID);
+			foreach (var item in enumerable) {
+				yield return item;
+			}
+		}
+
+		[Route("GetStudentsAnswers/{id}")]
+		[HttpGet]
+		public async Task<ActionResult<Dictionary<Guid, bool>>> GetStudentsAnswersAsync(Guid id) {
+			return await answerManagement.GetStudentAnswersAsync (id);
 		}
 
 	}

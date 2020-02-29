@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using EducationLib.DatabaseManagement;
 using EducationLib.Shared;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 
 namespace Education.API.Controllers {
-	
+
 	[Route ("api/[controller]")]
 	[ApiController]
 	public class UsersController : ControllerBase {
@@ -21,7 +21,7 @@ namespace Education.API.Controllers {
 			userManagement = new UserManagement (collection, codes);
 		}
 
-		[Route("LogIn")]
+		[Route ("LogIn/{login}/{password}")]
 		[HttpPost]
 		public async Task<ActionResult<User>> LogInAsync (string login, string password) {
 			var id = await userManagement.LogInAsync (login, password);
@@ -29,18 +29,27 @@ namespace Education.API.Controllers {
 			return await userManagement.GetUserDataAsync (id);
 		}
 
-		[Route("Register")]
+		[Route ("Register/{user}/{code}")]
 		[HttpPost]
-		public async Task<ActionResult<Guid>> RegisterAsync (User user, string code) {
-			var id = await userManagement.RegisterAsync (user, code);
+		public async Task<ActionResult<Guid>> RegisterAsync (string user, string code) {
+			var id = await userManagement.RegisterAsync (JsonConvert.DeserializeObject<User> (user), code);
 			return id;
 		}
 
-		[Route("GenerateCode")]
+		[Route ("GenerateCode/{id}/{howMany}/{role}")]
 		[HttpPost]
-		public async Task<ActionResult> GenerateCodeAsync (Guid id, int howMany) {
-			await userManagement.GenerateRegisterCodes (id, howMany);
+		public async Task<ActionResult> GenerateCodeAsync (Guid id, int howMany, UserRole role) {
+			await userManagement.GenerateRegisterCodes (id, howMany, role);
 			return Ok ();
+		}
+
+		[Route ("SchoolStudents/{schoolID}")]
+		[HttpGet]
+		public async IAsyncEnumerable<User> SchoolStudentsAsync (Guid schoolID) {
+			var ids = await userManagement.GetSchoolStudentsAsync (schoolID);
+			foreach (var item in ids) {
+				yield return item;
+			}
 		}
 
 	}

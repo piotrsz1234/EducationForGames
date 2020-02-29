@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>57fb78ad-d398-4254-b01e-82e39249f036</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <LangVersion>8.0</LangVersion>
+    <Authors>Piotr Szuflicki</Authors>
+    <Company />
   </PropertyGroup>
 
   <ItemGroup>
