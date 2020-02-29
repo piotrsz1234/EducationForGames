@@ -5,8 +5,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace EducationLib.Shared {
 	
-	[Serializable]
+	//[Serializable]
 	[BsonNoId]
+	[BsonIgnoreExtraElements]
 	public class RegistrationCode {
 		
 		[BsonElement("SchoolID")]

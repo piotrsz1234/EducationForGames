@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace EducationLib.Shared {
 
-	[Serializable]
+	//[Serializable]
 	public class User {
 
 		[BsonId]

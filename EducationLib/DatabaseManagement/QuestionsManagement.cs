@@ -44,5 +44,15 @@ namespace EducationLib.DatabaseManagement {
 			await collection.DeleteOneAsync (x => x.ID == id);
 		}
 
+		public async Task<IEnumerable<Question>> GetTeachersQuestionsAsync(Guid id) {
+			var result = await collection.FindAsync (x => x.TeacherID == id);
+			IEnumerable<Question> output = Array.Empty<Question> ();
+			do {
+				output = output.Join (result.Current);
+			}
+			while (await result.MoveNextAsync ());
+			return output;
+		}
+
 	}
 }
