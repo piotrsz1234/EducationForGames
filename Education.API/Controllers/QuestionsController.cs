@@ -89,5 +89,11 @@ namespace Education.API.Controllers {
 			return await answerManagement.GetStudentAnswersAsync (id);
 		}
 
+		[HttpGet]
+		[Route("HowManyQuestionsAdded/{id}")]
+		public async Task<ActionResult<long>> HowManyQuestionsAddedAsync (Guid id) {
+			return await questionManagement.HowManyQuestionsAddedAsync (id);
+		}
+
 	}
 }

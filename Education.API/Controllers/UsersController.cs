@@ -8,6 +8,7 @@ using EducationLib.DatabaseManagement;
 using EducationLib.Shared;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Education.API.Controllers {
 
@@ -38,9 +39,9 @@ namespace Education.API.Controllers {
 
 		[Route ("GenerateCode/{id}/{howMany}/{role}")]
 		[HttpPost]
-		public async Task<ActionResult> GenerateCodeAsync (Guid id, int howMany, UserRole role) {
+		public async Task<ActionResult<string>> GenerateCodeAsync (Guid id, int howMany, UserRole role) {
 			await userManagement.GenerateRegisterCodes (id, howMany, role);
-			return Ok ();
+			return "";
 		}
 
 		[Route ("SchoolStudents/{schoolID}")]
@@ -48,6 +49,24 @@ namespace Education.API.Controllers {
 		public async IAsyncEnumerable<User> SchoolStudentsAsync (Guid schoolID) {
 			var ids = await userManagement.GetSchoolStudentsAsync (schoolID);
 			foreach (var item in ids) {
+				yield return item;
+			}
+		}
+
+		[Route ("SchoolUsers/{schoolID}")]
+		[HttpGet]
+		public async IAsyncEnumerable<User> SchoolUsersAsync (Guid schoolID) {
+			var temp = await userManagement.GetSchoolUsersAsync (schoolID);
+			foreach (var item in temp) {
+				yield return item;
+			}
+		}
+
+		[Route("SchoolCodes/{schoolID}")]
+		[HttpGet]
+		public async IAsyncEnumerable<RegistrationCode> SchoolCodesAsync(Guid schoolID) {
+			var codes = await userManagement.GetCodesAsync (schoolID);
+			foreach (var item in codes) {
 				yield return item;
 			}
 		}
