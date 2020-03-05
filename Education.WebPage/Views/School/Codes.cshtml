@@ -1,0 +1,25 @@
+﻿@model List<RegistrationCode>
+
+@{
+	ViewData["Title"] = "Codes";
+}
+<div class="text-center">
+	<a class="btn btn-success" href="/School/AddCodes">Add Code</a>
+</div>
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td scope="col">Code</td>
+			<td scope="col">User Role</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model) {
+			<tr>
+				<td>@item.Code</td>
+				<td>@Enum.GetName(typeof(UserRole), item.Role)</td>
+			</tr>
+		}
+	</tbody>
+</table>

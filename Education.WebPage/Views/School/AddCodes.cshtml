@@ -1,0 +1,19 @@
+﻿@{
+	ViewData["Title"] = "Add Codes";
+}
+
+<div class="text-center">
+	<form method="post" action="/School/AddCodes">
+		<fieldset class="form-group">
+			<label for="codeCounts">Example range</label>
+			<input type="range" min="1" max="10" class="custom-range" id="codeCounts" name="howMany" />
+		</fieldset>
+		<div class="form-group">
+			<select class="custom-select" name="forWho">
+				<option value="0" selected>Student</option>
+				<option value="1">Teacher</option>
+			</select>
+		</div>
+		<button class="btn btn-success">Add</button>
+	</form>
+</div>
