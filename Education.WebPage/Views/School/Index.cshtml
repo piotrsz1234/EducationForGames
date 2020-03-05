@@ -1,7 +1,56 @@
-﻿@model Guid
+﻿@model List<User>
+@inject HttpHelper helper
 
 @{
-    ViewData["Title"] = "Index";
-    
+	ViewData["Title"] = "School Index";
+
 }
-@Model.ToString()
+<div class="text-center">
+	<a class="btn btn-primary" href="/School/Codes">Manage codes</a>
+</div>
+
+<h3>Teachers registered in this school</h3>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td scope="col">Login</td>
+			<td scope="col">ID</td>
+			<td scope="col">Questions Added</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.Where (x => x.Role == UserRole.Teacher)) {
+			<tr>
+				<td>@item.Login</td>
+				<td>@item.ID</td>
+				<td>@(await helper.Get<long> ("Questions/HowManyQuestionsAdded/" + item.ID))</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<h3>Students registered in this school</h3>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td scope="col">Login</td>
+			<td scope="col">ID</td>
+			<td scope="col">How Many Good Answers</td>
+			<td scope="col">How Many Answers</td>
+			<td scope="col">Success Percent</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.Where (x => x.Role == UserRole.Student)) {
+			var temp = await helper.Get<Dictionary<Guid, bool>> ($"Questions/GetStudentsAnswers/{item.ID}");
+			var good = temp.Count (x => x.Value);
+			var count = temp.Count;
+			<tr>
+				<td>@item.Login</td>
+				<td>@item.ID</td>
+				<td>@good</td>
+				<td>@count</td>
+				<td>@(good / (float) count)%</td>
+			</tr>
+		}
+	</tbody>
+</table>
