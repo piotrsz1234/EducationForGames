@@ -28,10 +28,15 @@ namespace Education.WebPage {
 		}
 
 		public static bool IsTeacherLoggedIn(this Controller controller) {
-			if (!IsUserLoggedIn (controller)) return false;
-			var role = controller.HttpContext.Session.Get<User> ("User").Role;
-			if (role == UserRole.Teacher) return true;
-			return false;
+			return IsUserWithGivenRoleLoggedIn (controller, UserRole.Teacher);
+		}
+
+		public static bool IsSchoolLoggedIn (this Controller controller) {
+			return IsUserWithGivenRoleLoggedIn (controller, UserRole.School);
+		}
+
+		public static User GetUser(this Controller controller) {
+			return controller.HttpContext.Session.Get<User> ("User");
 		}
 
 		public static IEnumerable<T> RemoveEmpties<T> (this IEnumerable<T> collection) {
@@ -42,6 +47,7 @@ namespace Education.WebPage {
 		}
 
 		public static string Encode (this string rawData) {
+			if (rawData == null || string.IsNullOrWhiteSpace (rawData)) return "";
 			using (SHA256 sha256Hash = SHA256.Create ()) {
 				byte[] bytes = sha256Hash.ComputeHash (Encoding.UTF8.GetBytes (rawData));
 				StringBuilder builder = new StringBuilder ();
@@ -52,5 +58,11 @@ namespace Education.WebPage {
 			}
 		}
 
+		private static bool IsUserWithGivenRoleLoggedIn(Controller controller, UserRole userRole) {
+			if (!IsUserLoggedIn (controller)) return false;
+			var role = controller.HttpContext.Session.Get<User> ("User").Role;
+			if (role == userRole) return true;
+			return false;
+		}
 	}
 }

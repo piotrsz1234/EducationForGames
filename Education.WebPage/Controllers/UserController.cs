@@ -16,9 +16,10 @@ namespace Education.WebPage.Controllers {
 			httpHelper = helper;
 		}
 
+		[Route ("User/Index")]
 		public IActionResult Index () {
 			if (!this.IsUserLoggedIn ()) return RedirectToAction ("Index", "Home");
-			var user = HttpContext.Session.Get<User> ("User");
+			var user = this.GetUser ();
 			if (user.Role == UserRole.Student) return RedirectToAction ("Index", "Student");
 			if (user.Role == UserRole.Teacher) return RedirectToAction ("Index", "Teacher");
 			if (user.Role == UserRole.School) return RedirectToAction ("Index", "School");
