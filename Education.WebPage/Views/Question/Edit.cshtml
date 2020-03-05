@@ -1,24 +1,27 @@
 ﻿@model EducationLib.Shared.Question
 
 @{
-    ViewData["Title"] = "Edit Question";
+	ViewData["Title"] = "Edit Question";
 }
 
+	<form action="/Question/Edit" method="post">
+		<input type="hidden" name="ID" value="@Model.ID" />
+		<input type="hidden" name="CorrectAnswer" id="correct" value="@Model.CorrectAnswer" />
+		<input type="hidden" name="TeacherID" id="correct" value="@Model.TeacherID" />
+		<label for="questionText"></label>
+		<input id="questionText" type="text" class="form-control" value="@Model.QuestionText" name="QuestionText" />
+		<div id="answers">
+			@for (int i = 0; i < Model.SeparatedAnswers.Length; i++) {
+				<div class="text-center">
+					<input type="text" class="d-inline-block" name="SeparatedAnswers[@i]" id="@("sa" +i)" placeholder="Answer" value="@Model.SeparatedAnswers[i]" />
+					<div onclick="SetAnswer(@i)" id="@("answer" + @i)" class="btn btn-link d-inline-block">Correct Answer</div>
+				</div>
+			}
+		</div>
+		<div class="btn btn-info" onclick="UpdateValues()">Add Answer</div><br />
+		<input type="submit" value="Save Changes" class="btn btn-primary" />
+	</form>
 <script>
+	SetAnswer(@Model.CorrectAnswer);
 	SetCountOfAnswers(@Model.SeparatedAnswers.Length);
 </script>
-
-<form action="Question/Edit" method="post">
-    <input type="hidden" name="ID" value="@Model.ID" />
-    <label for="questionText"></label>
-    <input id="questionText" type="text" class="form-control" value="@Model.QuestionText" name="QuestionText" />
-       
-        @for (int i = 0; i < Model.SeparatedAnswers.Length; i++) {
-            <label for="answer">Answer</label>
-            <input id="answer" type="text" value="@Model.SeparatedAnswers.ElementAt(i)" name="SeperatedAnswers[@i]" />
-            <input type="radio" id="customRadio" name="CorrectAnswer" class="custom-control-input" value="@i">
-            <label class="custom-control-label" for="customRadio">Correct Answer</label>
-		}
-    <button class="btn btn-primary" onclick="UpdateValues()">Add Answer</button>
-    <input type="submit" value="Add" class="btn btn-primary" />
-</form>

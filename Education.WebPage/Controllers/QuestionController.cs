@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using EducationLib.APIHelper;
 using EducationLib.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 
 namespace Education.WebPage.Controllers {
+	[Route("[controller]/")]
 	public class QuestionController : Controller {
 
 		private readonly HttpHelper httpHelper;
@@ -19,54 +23,57 @@ namespace Education.WebPage.Controllers {
 		[Route ("Add/{question?}")]
 		[HttpGet]
 		public ActionResult Add (Question question = null) {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
+			if (question.TeacherID != HttpContext.Session.Get<User> ("User").ID)
+				question = null;
 			return View (question);
 		}
 
 		[Route ("Add")]
 		[HttpPost]
-		public ActionResult AddPost (Question question) {
-			if (string.IsNullOrWhiteSpace (question.QuestionText) || string.IsNullOrWhiteSpace (question.Answers))
-				return RedirectToAction ("Add", "Question", question);
+		public async Task<ActionResult> AddPostAsync (Question question) {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
 			question.TeacherID = HttpContext.Session.Get<User> ("User").ID;
-			httpHelper.Post<object> ("Questions/AddQuestion", question);
+			if (string.IsNullOrWhiteSpace (question.QuestionText) || question.SeparatedAnswers == null)
+				return RedirectToAction ("Add", "Question", question);
+			question.SeparatedAnswers = question.SeparatedAnswers.Where (x => !string.IsNullOrEmpty (x)).ToArray ();
+			await httpHelper.PostAsync<string> ($"Questions/AddQuestion", question);
 			return RedirectToAction ("Index", "Teacher");
 		}
 
-		[Route ("Edit/{question:Guid}")]
+		[Route ("Edit/{id}")]
 		[HttpGet]
-		public async Task<ActionResult> EditAsync (Guid guid) {
-			Question question = await httpHelper.Get<Question> ($"Questions/GetQuestion/{guid}");
+		public async Task<ActionResult> EditAsync (Guid id) {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
+			Question question = await httpHelper.Get<Question> ($"Questions/GetQuestion/{id}");
+			Console.WriteLine (JsonConvert.SerializeObject (question));
 			if (question == null) return RedirectToAction ("Index", "Teacher");
 			return View (question);
 		}
 
-		[Route ("Edit/{question}")]
+		[Route ("Edit")]
 		[HttpPost]
-		public ActionResult Edit (Question question) {
-			httpHelper.Post<string> ("Questions/UpdateQuestion", new Dictionary<string, string> () {
-				{ "newValue", JsonConvert.SerializeObject(question) },
-				{ "id", question.ID.ToString() }
-			});
+		public async Task<ActionResult> EditAsync (Question question) {
+			await httpHelper.PostAsync<object> ("Questions/UpdateQuestion", question);
 			return RedirectToAction ("Index", "Teacher");
 		}
 
 		[Route ("Delete/{id}")]
 		[HttpGet]
-		public ActionResult Delete (Guid id) {
-			httpHelper.Post<string> ("Questions/DeleteQuestion", id);
-			return Ok ();
+		public async Task<ActionResult> DeleteAsync (Guid id) {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
+			await httpHelper.Get<string> ($"Questions/DeleteQuestion/{id}");
+			return RedirectToAction("Index", "Teacher");
 		}
 
 		[Route ("Stats/{id}")]
 		[HttpGet]
-		public ActionResult Stats (Guid id) {
+		public async Task<ActionResult> StatsAsync (Guid id) {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
 			Dictionary<Guid, bool> data = new Dictionary<Guid, bool> ();
-			var ids = httpHelper.Post<List<Guid>> ("Questions/IDOfUsersWhoAnswered", id);
+			var ids = await httpHelper.Get<List<Guid>> ($"Questions/IDOfUsersWhoAnswered/{id}");
 			foreach (var item in ids) {
-				bool value = httpHelper.Post<bool> ("Questions/GetAnswer", new Dictionary<string, string> () {
-					{ "user", item.ToString() },
-					{ "question", id.ToString() }
-				});
+				bool value = await httpHelper.Get<bool> ($"Questions/GetAnswer/{item}/{id}");
 				data.Add (item, value);
 			}
 			return View (data);

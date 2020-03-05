@@ -17,28 +17,30 @@ namespace Education.WebPage.Controllers {
 		}
 
 
-		[Route("Index")]
+		[Route("Teacher/Index")]
 		[HttpGet]
 		public async Task<IActionResult> IndexAsync () {
-			if (!this.IsUserLoggedIn ()) return RedirectToAction ("Index", "Home");
-			List<Question> model =
-				await httpHelper.Get<List<Question>> ($"Teacher/GetTeachersQuestions/{HttpContext.Session.Get<User> ("User").ID}");
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
+			List<Question> model = 
+				new List<Question> (await httpHelper.Get<IEnumerable<Question>> ($"Questions/GetTeachersQuestions/{HttpContext.Session.Get<User> ("User").ID}"));
 			return View (model);
 		}
 
-		[Route("ViewStudents")]
+		[Route("Teacher/ViewStudents")]
 		[HttpGet]
 		public async Task<IActionResult> ViewSchoolStudentsAsync () {
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
 			List<User> model = new List<User> ();
 			var temp = await httpHelper.Get<IEnumerable<User>> ("Users/SchoolStudents/" + HttpContext.Session.Get<User> ("User").ID);
 			if (temp != null) model.AddRange (temp);
 			return View (model);
 		}
 
-		[Route("ViewStudentsAnswers/{studentID}")]
+		[Route("Teacher/ViewStudentsAnswers/{studentID}")]
 		[HttpGet]
 		public async Task<IActionResult> ViewStudentsAnswersAsync (Guid studentID) {
-			Dictionary<Guid, bool> model = await httpHelper.Get<Dictionary<Guid, bool>> ("Questions/GetStudentsAnswers");
+			if (!this.IsTeacherLoggedIn ()) return RedirectToAction ("Index", "Home");
+			Dictionary<Guid, bool> model = await httpHelper.Get<Dictionary<Guid, bool>> ($"Questions/GetStudentsAnswers/{studentID}");
 			return View (model);
 		}
 

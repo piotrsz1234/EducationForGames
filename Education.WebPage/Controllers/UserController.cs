@@ -28,7 +28,7 @@ namespace Education.WebPage.Controllers {
 		[Route ("User/LogIn")]
 		[HttpPost]
 		public IActionResult LogIn (string login, string password) {
-			password = password.GetHashCode ().ToString ();
+			password = password.Encode ();
 			var temp = new Dictionary<string, string> {
 				{ "login", login },
 				{ "password", password }
@@ -44,7 +44,7 @@ namespace Education.WebPage.Controllers {
 		public IActionResult Register (string login, string password, string registerCode) {
 			User user = new User {
 				Login = login,
-				Password = password.GetHashCode ().ToString ()
+				Password = password.Encode ()
 			};
 			Dictionary<string, string> temp = new Dictionary<string, string> {
 				{ "user", JsonConvert.SerializeObject (user) },
@@ -57,5 +57,11 @@ namespace Education.WebPage.Controllers {
 			}
 			return LogIn (login, password);
 		}
+	
+		public IActionResult LogOut() {
+			HttpContext.Session.Clear ();
+			return RedirectToActionPermanent ("Index", "Home");
+		}
+
 	}
 }
