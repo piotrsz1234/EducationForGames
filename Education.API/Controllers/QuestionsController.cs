@@ -7,7 +7,7 @@ using MongoDB.Driver;
 using System.Collections.Generic;
 
 namespace Education.API.Controllers {
-	
+
 	[Route ("api/[controller]")]
 	[ApiController]
 	public class QuestionsController : ControllerBase {
@@ -20,17 +20,17 @@ namespace Education.API.Controllers {
 			answerManagement = new AnswerManagement (collection2);
 		}
 
-		[Route ("AddQuestion/{question}")]
+		[Route ("AddQuestion")]
 		[HttpPost]
-		public async Task<ActionResult> AddQuestionAsync (Question question) {
+		public async Task<ActionResult<string>> AddQuestionAsync (Question question) {
 			await questionManagement.AddQuestionAsync (question);
-			return Ok ();
+			return "";
 		}
 
-		[Route ("UpdateQuestion/{newValue}/{id}")]
+		[Route ("UpdateQuestion")]
 		[HttpPost]
-		public async Task<ActionResult> UpdateQuestionAsync (Question newValue, Guid id) {
-			await questionManagement.UpdateQuestionAsync (id, newValue);
+		public async Task<ActionResult> UpdateQuestionAsync (Question newValue) {
+			await questionManagement.UpdateQuestionAsync (newValue.ID, newValue);
 			return Ok ();
 		}
 
@@ -41,26 +41,26 @@ namespace Education.API.Controllers {
 		}
 
 		[Route ("DeleteQuestion/{id}")]
-		[HttpPost]
-		public async Task<ActionResult> DeleteQuestionAsync (Guid id) {
+		[HttpGet]
+		public async Task<ActionResult<string>> DeleteQuestionAsync (Guid id) {
 			await questionManagement.DeleteQuestionAsync (id);
-			return Ok ();
+			return "";
 		}
 
-		[Route("AddAnswer/{user}/{question}/{status}")]
+		[Route ("AddAnswer/{user}/{question}/{status}")]
 		[HttpPost]
-		public async Task<ActionResult> AddAnswerAsync(Guid user, Guid question, bool status) {
+		public async Task<ActionResult> AddAnswerAsync (Guid user, Guid question, bool status) {
 			await answerManagement.AnswerQuestionAsync (question, user, status);
 			return Ok ();
 		}
 
-		[Route("GetAnswer/{user}/{question}")]
-		[HttpPost]
-		public async Task<ActionResult<bool>> GetAnswerAsync(Guid user, Guid question) {
+		[Route ("GetAnswer/{user}/{question}")]
+		[HttpGet]
+		public async Task<ActionResult<bool>> GetAnswerAsync (Guid user, Guid question) {
 			return await answerManagement.GetAnswerAsync (user, question);
 		}
 
-		[Route("GoodAnswersPercent/{id}")]
+		[Route ("GoodAnswersPercent/{id}")]
 		[HttpGet]
 		public async Task<ActionResult<float>> GoodAnswersPercentAsync (Guid id) {
 			long answersCount = await answerManagement.HowManyAnswers (id);
@@ -69,27 +69,23 @@ namespace Education.API.Controllers {
 			return goodAnswersCount / (float) answersCount;
 		}
 
-		[Route("IDOfUsersWhoAnswered/{id}")]
+		[Route ("IDOfUsersWhoAnswered/{id}")]
 		[HttpGet]
-		public async IAsyncEnumerable<Guid> IDOfUsersWhoAnsweredAsync(Guid id) {
+		public async Task<IEnumerable<Guid>> IDOfUsersWhoAnsweredAsync (Guid id) {
 			IEnumerable<Guid> ids = await answerManagement.IDOfUsersHowAnsweredQuestion (id);
-			foreach (var item in ids) {
-				yield return item;
-			}
+			return ids;
 		}
 
-		[Route("GetTeachersQuestion/{teacherID}")]
+		[Route ("GetTeachersQuestions/{teacherID}")]
 		[HttpGet]
-		public async IAsyncEnumerable<Question> GetTeachersQuestionsAsync (Guid teacherID) {
+		public async Task<IEnumerable<Question>> GetTeachersQuestionsAsync (Guid teacherID) {
 			var enumerable = await questionManagement.GetTeachersQuestionsAsync (teacherID);
-			foreach (var item in enumerable) {
-				yield return item;
-			}
+			return enumerable;
 		}
 
-		[Route("GetStudentsAnswers/{id}")]
+		[Route ("GetStudentsAnswers/{id}")]
 		[HttpGet]
-		public async Task<ActionResult<Dictionary<Guid, bool>>> GetStudentsAnswersAsync(Guid id) {
+		public async Task<ActionResult<Dictionary<Guid, bool>>> GetStudentsAnswersAsync (Guid id) {
 			return await answerManagement.GetStudentAnswersAsync (id);
 		}
 
