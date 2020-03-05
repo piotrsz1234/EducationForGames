@@ -54,8 +54,22 @@ namespace EducationLib.DatabaseManagement {
 			return output;
 		}
 
-		public void AddUser (User user) {
-			collection.InsertOne (user);
+		public async Task<IEnumerable<User>> GetSchoolUsersAsync (Guid schoolID) {
+			List<User> output = new List<User> ();
+			var result = await collection.FindAsync (x => x.SchoolID == schoolID);
+			while (await result.MoveNextAsync()) {
+				output.AddRange (result.Current);
+			}
+			return output;
+		}
+
+		public async Task<IEnumerable<RegistrationCode>> GetCodesAsync(Guid schoolID) {
+			List<RegistrationCode> output = new List<RegistrationCode> ();
+			var result = await codesCollection.FindAsync (x => x.SchoolID == schoolID);
+			while (await result.MoveNextAsync()) {
+				output.AddRange (result.Current);
+			}
+			return output;
 		}
 
 	}

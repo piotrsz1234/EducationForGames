@@ -56,5 +56,10 @@ namespace EducationLib.DatabaseManagement {
 			return output;
 		}
 
+		public async Task<long> HowManyQuestionsAddedAsync (Guid id) {
+			var value = await collection.CountDocumentsAsync (x => x.TeacherID == id);
+			return value;
+		}
+
 	}
 }

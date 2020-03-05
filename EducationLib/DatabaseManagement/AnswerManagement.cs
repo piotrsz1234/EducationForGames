@@ -56,11 +56,11 @@ namespace EducationLib.DatabaseManagement {
 		public async Task<Dictionary<Guid, bool>> GetStudentAnswersAsync (Guid userID) {
 			Dictionary<Guid, bool> output = new Dictionary<Guid, bool> ();
 			var result = await collection.FindAsync (x => x.UserID == userID);
-			do {
+			while (await result.MoveNextAsync ()) {
 				foreach (var item in result.Current) {
 					output.Add (item.QuestionID, item.Status);
 				}
-			} while (await result.MoveNextAsync ());
+			}
 			return output;
 		}
 

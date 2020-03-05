@@ -45,7 +45,9 @@ namespace EducationLib.APIHelper {
 			var data = new StringContent (JsonConvert.SerializeObject (toSend), Encoding.UTF8, "application/json");
 			using (var client = new HttpClient ()) {
 				var response = await client.PostAsync (CombineUrls (url), data);
-				return JsonConvert.DeserializeObject<T> (await response.Content.ReadAsStringAsync ());
+				string temp = await response.Content.ReadAsStringAsync ();
+				Console.WriteLine ($"[INFO] Returened: {temp}");
+				return JsonConvert.DeserializeObject<T> (temp);
 			}
 
 		}
