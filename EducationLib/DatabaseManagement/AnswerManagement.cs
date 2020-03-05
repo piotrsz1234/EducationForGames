@@ -10,7 +10,7 @@ namespace EducationLib.DatabaseManagement {
 
 		public AnswerManagement (IMongoCollection<QuestionAnswer> col) : base (col) { }
 
-		public async Task AnswerQuestionAsync(Guid questionId, Guid userID, bool status) {
+		public async Task AnswerQuestionAsync (Guid questionId, Guid userID, bool status) {
 			var result = await collection.FindAsync (x => x.QuestionID == questionId && x.UserID == userID);
 			if (!result.Any ()) {
 				QuestionAnswer value = new QuestionAnswer {
@@ -24,17 +24,18 @@ namespace EducationLib.DatabaseManagement {
 					Builders<QuestionAnswer>.Update.Set ("Status", status));
 		}
 
-		public async Task<bool> GetAnswerAsync(Guid userID, Guid questionID) {
+		public async Task<bool> GetAnswerAsync (Guid userID, Guid questionID) {
 			var result = await collection.FindAsync (x => x.QuestionID == questionID && x.UserID == userID);
 			return (await result.FirstAsync ()).Status;
 		}
 
-		public async Task<long> HowManyAnswers(Guid questionID) {
-			long output = await collection.CountDocumentsAsync (x => x!=null);
+		public async Task<long> HowManyAnswers (Guid questionID) {
+			if (await collection.CountDocumentsAsync (x => true) == 0) return 0;
+			long output = await collection.CountDocumentsAsync (x => x.QuestionID == questionID);
 			return output;
 		}
 
-		public async Task<long> HowManyGoodAnswers(Guid questionID) {
+		public async Task<long> HowManyGoodAnswers (Guid questionID) {
 			long output = await collection.CountDocumentsAsync (x => x.Status);
 			return output;
 		}
@@ -44,7 +45,7 @@ namespace EducationLib.DatabaseManagement {
 			return GetAnswers (result);
 		}
 
-		private IEnumerable<Guid> GetAnswers(IAsyncCursor<QuestionAnswer> result) {
+		private IEnumerable<Guid> GetAnswers (IAsyncCursor<QuestionAnswer> result) {
 			while (result.MoveNext ()) {
 				foreach (var item in result.Current) {
 					yield return item.UserID;

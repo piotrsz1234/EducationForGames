@@ -46,11 +46,13 @@ namespace EducationLib.DatabaseManagement {
 
 		public async Task<IEnumerable<Question>> GetTeachersQuestionsAsync(Guid id) {
 			var result = await collection.FindAsync (x => x.TeacherID == id);
-			IEnumerable<Question> output = Array.Empty<Question> ();
-			do {
-				output = output.Join (result.Current);
+			if (!await result.AnyAsync ()) return Array.Empty<Question> ();
+			List<Question> output =new List<Question> ();
+			result = await collection.FindAsync (x => x.TeacherID == id);
+			while (await result.MoveNextAsync ()) {
+				output.AddRange (result.Current);
 			}
-			while (await result.MoveNextAsync ());
+			
 			return output;
 		}
 

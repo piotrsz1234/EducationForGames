@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
+using EducationLib.Shared;
 
 namespace EducationLib.APIHelper {
 	public class HttpHelper {
@@ -34,10 +35,19 @@ namespace EducationLib.APIHelper {
 				foreach (var item in values) {
 					data.Add (item.Key, item.Value);
 				}
-				var response = wb.UploadValues (CombineUrls(url), "POST", data);
+				var response = wb.UploadValues (CombineUrls (url), "POST", data);
 				string responseInString = Encoding.UTF8.GetString (response);
-				return JsonConvert.DeserializeObject<T>(responseInString);
+				return JsonConvert.DeserializeObject<T> (responseInString);
 			}
+		}
+
+		public async Task<T> PostAsync<T> (string url, object toSend) {
+			var data = new StringContent (JsonConvert.SerializeObject (toSend), Encoding.UTF8, "application/json");
+			using (var client = new HttpClient ()) {
+				var response = await client.PostAsync (CombineUrls (url), data);
+				return JsonConvert.DeserializeObject<T> (await response.Content.ReadAsStringAsync ());
+			}
+
 		}
 
 		public T Post<T> (string url, object toSend) {
@@ -47,6 +57,7 @@ namespace EducationLib.APIHelper {
 
 		private string CombineUrls (string url) {
 			if (url[0] == '/') url = url.Substring (1);
+			Console.WriteLine ((APIServerUrl + url));
 			return (APIServerUrl + url);
 		}
 
