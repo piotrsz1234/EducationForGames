@@ -41,3 +41,20 @@ function SetAnswer(value) {
 	temp.className = temp.className.replace("btn-link", "btn-success");
 	t.value = value;
 }
+
+function Contains(iN, what) {
+	for (var i = 0; i < iN.length - what.length; i++) {
+		if (iN.substring(i, i + what.length - 1) == what)
+			return true;
+	}
+	return false;
+}
+
+function DoesValuesAreEven() {
+	var pass1 = document.getElementById("pass1").value;
+	var pass2 = document.getElementById("pass2").value;
+	var btn = document.getElementById("btn1");
+	var temp = (pass1 != pass2) && pass1 != "";
+	document.getElementById("info").style.display = (!temp) ? "none" : "block";
+	btn.disabled = temp;
+}

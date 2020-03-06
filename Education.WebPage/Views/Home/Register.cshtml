@@ -4,10 +4,20 @@
 }
 
 <form class="signForm bodyContainer" method="post" action="/User/Register">
-	<h1 class="h3 mb-3 font-weight-normal">Please Log In</h1>
-	<input type="text" class="form-control" name="login" placeholder="Login" />
-	<input type="password" class="form-control" name="password" placeholder="Password" />
-	<input type="text" class="form-control" name="registerCode" placeholder="Register Code" />
-	<input type="submit" class="btn btn-lg btn-primary btn-block" value="Log In" />
+	<h1 class="h3 mb-3 font-weight-normal">Please Register</h1>
+	<div class="form-group">
+		<input type="text" class="form-control" name="login" id="login" placeholder="Login" />
+	</div>
+	<div class="form-group">
+		<input type="password" oninput="DoesValuesAreEven()" class="form-control" name="password" placeholder="Password" id="pass1" />
+	</div>
+	<div class="form-group has-danger">
+		<input type="password" oninput="DoesValuesAreEven()" class="form-control" placeholder="Repeated Password" id="pass2" />
+		<div class="invalid-feedback" id="info">Password's does not match or given is empty value!</div>
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" name="registerCode" placeholder="Register Code" />
+	</div>
+	<input type="submit" class="btn btn-lg btn-primary btn-block" value="Register" id="btn1" />
 	<br />
 </form>
