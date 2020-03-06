@@ -4,8 +4,12 @@
 
 <form class="signForm bodyContainer" method="post" action="/User/LogIn">
 	<h1 class="h3 mb-3 font-weight-normal">Please Log In</h1>
-	<input type="text" class="form-control" name="login"	placeholder="Login" />
-	<input type="password" class="form-control" name="password" placeholder="Password" />
+	<div class="form-group">
+		<input type="text" class="form-control" name="login" placeholder="Login" />
+	</div>
+	<div class="form-group">
+		<input type="password" class="form-control" name="password" placeholder="Password" />
+	</div>
 	<input type="submit" class="btn btn-lg btn-primary btn-block" value="Log In" />
 	<br />
 	<a href="/Home/Register" class="btn btn-lg btn-block btn-secondary">Register</a>
