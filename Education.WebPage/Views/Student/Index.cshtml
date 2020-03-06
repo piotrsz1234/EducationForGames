@@ -1,0 +1,26 @@
+﻿@model Dictionary<Guid, bool>
+
+@{
+	ViewData["Title"] = "Student";
+}
+
+<h5 class="text-center">Good Answers: @(Model.Count (x => x.Value)) <br/> Answers: @(Model.Count)</h5>
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td scope="col">Question's ID</td>
+			<td scope="col">Answer</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model) {
+			<tr class="@((item.Value)?"table-success":"table-danger")">
+				<td>@item.Key</td>
+				<td>
+					<i class="material-icons">@((item.Value) ? "thumb_up" : "thumb_down")</i>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
