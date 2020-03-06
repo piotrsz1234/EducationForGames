@@ -37,6 +37,10 @@ namespace Education.WebPage {
 			return IsUserWithGivenRoleLoggedIn (controller.HttpContext.Session, UserRole.Teacher);
 		}
 
+		public static bool IsStudentLoggedIn(this Controller controller) {
+			return IsUserWithGivenRoleLoggedIn (controller.HttpContext.Session, UserRole.Student);
+		}
+
 		public static bool IsSchoolLoggedIn (this Controller controller) {
 			return IsUserWithGivenRoleLoggedIn (controller.HttpContext.Session, UserRole.School);
 		}
