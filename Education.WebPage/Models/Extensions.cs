@@ -27,12 +27,18 @@ namespace Education.WebPage {
 			return false;
 		}
 
+		public static bool IsUserLoggedIn (this ISession session) {
+			if (session.Get<User> ("User") != null)
+				return true;
+			return false;
+		}
+
 		public static bool IsTeacherLoggedIn(this Controller controller) {
-			return IsUserWithGivenRoleLoggedIn (controller, UserRole.Teacher);
+			return IsUserWithGivenRoleLoggedIn (controller.HttpContext.Session, UserRole.Teacher);
 		}
 
 		public static bool IsSchoolLoggedIn (this Controller controller) {
-			return IsUserWithGivenRoleLoggedIn (controller, UserRole.School);
+			return IsUserWithGivenRoleLoggedIn (controller.HttpContext.Session, UserRole.School);
 		}
 
 		public static User GetUser(this Controller controller) {
@@ -58,11 +64,12 @@ namespace Education.WebPage {
 			}
 		}
 
-		private static bool IsUserWithGivenRoleLoggedIn(Controller controller, UserRole userRole) {
-			if (!IsUserLoggedIn (controller)) return false;
-			var role = controller.HttpContext.Session.Get<User> ("User").Role;
+		public static bool IsUserWithGivenRoleLoggedIn(this ISession session, UserRole userRole) {
+			if (!IsUserLoggedIn (session)) return false;
+			var role = session.Get<User> ("User").Role;
 			if (role == userRole) return true;
 			return false;
 		}
+	
 	}
 }
