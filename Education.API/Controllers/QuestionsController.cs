@@ -5,6 +5,7 @@ using EducationLib.DatabaseManagement;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Education.API.Controllers {
 
@@ -85,8 +86,9 @@ namespace Education.API.Controllers {
 
 		[Route ("GetStudentsAnswers/{id}")]
 		[HttpGet]
-		public async Task<ActionResult<Dictionary<Guid, bool>>> GetStudentsAnswersAsync (Guid id) {
-			return await answerManagement.GetStudentAnswersAsync (id);
+		public async Task<ActionResult<string>> GetStudentsAnswersAsync (Guid id) {
+			var temp = await answerManagement.GetStudentAnswersAsync (id);
+			return JsonConvert.SerializeObject (temp);
 		}
 
 		[HttpGet]
